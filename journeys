@@ -1,0 +1,157 @@
+#!/usr/bin/env julia
+
+##############################################################################
+# Compass directions.
+@enum Direction begin
+    North
+    East
+    South
+    West
+end
+
+##############################################################################
+# Compass direction name to direction mapping dictionary.
+COMPASS = Dict(
+    "N" => North,
+    "E" => East,
+    "S" => South,
+    "W" => West
+)
+
+##############################################################################
+# Movement commands.
+@enum Command begin
+    Left
+    Right
+    Forward
+end
+
+##############################################################################
+# Command name to command mapping dictionary.
+COMMANDS = Dict(
+    "L" => Left,
+    "R" => Right,
+    "F" => Forward
+)
+
+##############################################################################
+# Structure to hold the state of the robot.
+struct State
+    x::Int
+    y::Int
+    facing::Direction
+end
+
+##############################################################################
+# Parse the given text as a robot state.
+function parse_state( text )
+
+    if ( m = match( r"^(\d+) (\d+) ([NESW])$", text ) ) !== nothing
+        return State(
+            parse( Int, m.captures[ 1 ] ),
+            parse( Int, m.captures[ 2 ] ),
+            COMPASS[ m.captures[ 3 ] ]
+        )
+    end
+
+    # TODO: Get upset.
+
+end
+
+##############################################################################
+# Parse the given text as robot commands.
+function parse_commands( text )
+
+    if ( m = match( r"^[FLR]+$", text ) ) !== nothing
+        return map( cmd -> COMMANDS[ cmd ], split( text, "" ) )
+    end
+
+    # TODO: Get upset
+
+end
+
+##############################################################################
+# Methods for moving forwards.
+forward( state, ::Val{North} ) = State( state.x, state.y + 1, North )
+forward( state, ::Val{South} ) = State( state.x, state.y - 1, South )
+forward( state, ::Val{East}  ) = State( state.x + 1 , state.y, East )
+forward( state, ::Val{West}  ) = State( state.x - 1 , state.y, West )
+forward( state ) = forward( state, Val( state.facing ) )
+
+##############################################################################
+# Handle turning left.
+left( state ) = State(
+    state.x,
+    state.y,
+    state.facing == North ? West : Direction( Int( state.facing ) - 1 )
+)
+
+##############################################################################
+# Handle turning right.
+right( state ) = State(
+    state.x,
+    state.y,
+    state.facing == West ? North : Direction( Int( state.facing ) + 1 )
+)
+
+##############################################################################
+# Perform a single command.
+perform( ::Val{Forward}, state ) = forward( state )
+perform( ::Val{Left},    state ) = left( state )
+perform( ::Val{Right},   state ) = right( state )
+
+##############################################################################
+# Perform a list of commands, given an initial state.
+function perform( commands, state )
+
+    for command in commands
+        state = perform( Val( command ), state )
+    end
+
+    state
+
+end
+
+##############################################################################
+# Test the given journey information.
+test_journey(
+    start_state, commands, end_state
+) = perform( commands, start_state ) == end_state
+
+##############################################################################
+# Main function.
+function main()
+
+    # Using the test file.
+    open( "journeys.txt" ) do input
+
+        # While we've not hit the end.
+        while !eof( input )
+
+            # If the next line isn't empty.
+            if ( line = strip( readline( input ) ) ) != ""
+
+                # Test the journey and print the result.
+                if test_journey(
+                    parse_state( line ),
+                    parse_commands( strip( readline( input ) ) ),
+                    parse_state( strip( readline( input ) ) )
+                )
+                    print( "Good journey!\n" )
+                else
+                    print( "Bad journey!\n" )
+                end
+
+            end
+
+        end
+
+    end
+
+end
+
+##############################################################################
+# Simply call the main function.
+main()
+
+### journeys ends here
