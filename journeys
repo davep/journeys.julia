@@ -32,7 +32,7 @@ Commands = Array{Command}
 
 ##############################################################################
 # Print a list of commands.
-Base.show( io::IO, m::Commands ) = print( io, join( m, ", " ) )
+Base.show( io::IO, commands::Commands ) = print( io, join( commands, ", " ) )
 
 ##############################################################################
 # Command name to command mapping dictionary.
@@ -52,7 +52,7 @@ end
 
 ##############################################################################
 # Print a state.
-Base.show( io::IO, m::State ) = print( io, "$(m.x) $(m.y) $(m.facing)" )
+Base.show( io::IO, state::State ) = print( io, "$(state.x) $(state.y) $(state.facing)" )
 
 ##############################################################################
 # Parse the given text as a robot state.
@@ -126,8 +126,8 @@ end
 
 ##############################################################################
 # Print a journey.
-Base.show( io::IO, m::Journey ) = print(
-    io, "$(m.start_state) -> $(m.commands) -> $(m.end_state)"
+Base.show( io::IO, journey::Journey ) = print(
+    io, "$(journey.start_state) -> $(journey.commands) -> $(journey.end_state)"
 )
 
 ##############################################################################
