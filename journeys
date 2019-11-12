@@ -137,9 +137,9 @@ function main()
                     parse_commands( strip( readline( input ) ) ),
                     parse_state( strip( readline( input ) ) )
                 )
-                    print( "Good journey!\n" )
+                    println( "Good journey!" )
                 else
-                    print( "Bad journey!\n" )
+                    println( "Bad journey!" )
                 end
 
             end
