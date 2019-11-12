@@ -27,6 +27,14 @@ COMPASS = Dict(
 end
 
 ##############################################################################
+# The type of a collection of commands.
+Commands = Array{Command}
+
+##############################################################################
+# Print a list of commands.
+Base.show( io::IO, m::Commands ) = print( io, join( m, ", " ) )
+
+##############################################################################
 # Command name to command mapping dictionary.
 COMMANDS = Dict(
     "L" => Left,
@@ -122,7 +130,7 @@ end
 # Holds the details of a journey.
 struct Journey
     start_state::State
-    commands::Array{Command}
+    commands::Commands
     end_state::State
 end
 
