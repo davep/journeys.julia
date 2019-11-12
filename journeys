@@ -43,6 +43,12 @@ struct State
 end
 
 ##############################################################################
+# Print a state.
+Base.show( io::IO, m::State ) = print(
+    io, "$(m.x) $(m.y) $(m.facing)"
+)
+
+##############################################################################
 # Parse the given text as a robot state.
 function parse_state( text )
 
@@ -113,10 +119,22 @@ function perform( commands, state )
 end
 
 ##############################################################################
-# Test the given journey information.
-test_journey(
-    start_state, commands, end_state
-) = perform( commands, start_state ) == end_state
+# Holds the details of a journey.
+struct Journey
+    start_state::State
+    commands::Array{Command}
+    end_state::State
+end
+
+##############################################################################
+# Print a journey.
+Base.show( io::IO, m::Journey ) = print(
+    io, "$(m.start_state) -> $(m.commands) -> $(m.end_state)"
+)
+
+##############################################################################
+# Is the given journey valid?
+is_valid( journey ) = perform( journey.commands, journey.start_state ) == journey.end_state
 
 ##############################################################################
 # Main function.
@@ -131,16 +149,15 @@ function main()
             # If the next line isn't empty.
             if ( line = strip( readline( input ) ) ) != ""
 
-                # Test the journey and print the result.
-                if test_journey(
+                # Create the journey.
+                journey = Journey(
                     parse_state( line ),
                     parse_commands( strip( readline( input ) ) ),
                     parse_state( strip( readline( input ) ) )
                 )
-                    println( "Good journey!" )
-                else
-                    println( "Bad journey!" )
-                end
+
+                # Print what we've found.
+                println( ( is_valid( journey ) ? "GOOD" : "BAD" ) * " $journey" )
 
             end
 
