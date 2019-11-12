@@ -112,15 +112,9 @@ perform( ::Val{Right},   state ) = right( state )
 
 ##############################################################################
 # Perform a list of commands, given an initial state.
-function perform( commands, state )
-
-    for command in commands
-        state = perform( Val( command ), state )
-    end
-
-    state
-
-end
+perform( commands, state ) = foldl(
+    ( state, command ) -> perform( Val( command ), state ), commands, init=state
+)
 
 ##############################################################################
 # Holds the details of a journey.
