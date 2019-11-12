@@ -52,9 +52,7 @@ end
 
 ##############################################################################
 # Print a state.
-Base.show( io::IO, m::State ) = print(
-    io, "$(m.x) $(m.y) $(m.facing)"
-)
+Base.show( io::IO, m::State ) = print( io, "$(m.x) $(m.y) $(m.facing)" )
 
 ##############################################################################
 # Parse the given text as a robot state.
@@ -95,16 +93,14 @@ forward( state ) = forward( state, Val( state.facing ) )
 ##############################################################################
 # Handle turning left.
 left( state ) = State(
-    state.x,
-    state.y,
+    state.x, state.y,
     state.facing == North ? West : Direction( Int( state.facing ) - 1 )
 )
 
 ##############################################################################
 # Handle turning right.
 right( state ) = State(
-    state.x,
-    state.y,
+    state.x, state.y,
     state.facing == West ? North : Direction( Int( state.facing ) + 1 )
 )
 
